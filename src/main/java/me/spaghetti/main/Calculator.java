@@ -169,6 +169,7 @@ public class Calculator implements ActionListener, KeyListener {
         panel.add(decButton);
         panel.add(equButton);
 
+        frame.setFocusable(true);
         frame.addKeyListener(this);
 
         frame.add(panel);
@@ -178,9 +179,7 @@ public class Calculator implements ActionListener, KeyListener {
     }
 
     public static void main(String[] args) {
-
-        Calculator calc = new Calculator();
-        calc.getClass();
+        new Calculator();
     }
 
     @Override
@@ -231,29 +230,17 @@ public class Calculator implements ActionListener, KeyListener {
             textfield.setText("0");
         }
         if (e.getSource() == equButton) {
-            if (repeat == false) {
+            if (!repeat) {
                 num2 = Double.parseDouble(textfield.getText());
             }
             textfield2.setText("");
             switch (operator) {
-                case '+':
-                    result = num1 + num2;
-                    break;
-                case '-':
-                    result = num1 - num2;
-                    break;
-                case '*':
-                    result = num1 * num2;
-                    break;
-                case '/':
-                    result = num1 / num2;
-                    break;
-                case '^':
-                    result = Math.pow(Double.parseDouble(textfield.getText()), 2);
-                    break;
-                default:
-                    result = Double.parseDouble(textfield.getText());
-                    break;
+                case '+' -> result = num1 + num2;
+                case '-' -> result = num1 - num2;
+                case '*' -> result = num1 * num2;
+                case '/' -> result = num1 / num2;
+                case '^' -> result = Math.pow(Double.parseDouble(textfield.getText()), 2);
+                default -> result = Double.parseDouble(textfield.getText());
             }
             textfield.setText(String.valueOf(result));
             textfield.setText(removeZeroPoint(textfield.getText()));
@@ -284,7 +271,7 @@ public class Calculator implements ActionListener, KeyListener {
         if (e.getSource() == toggleTop) {
             topBoolean = !topBoolean;
             frame.setAlwaysOnTop(topBoolean);
-            if (topBoolean == true) {
+            if (topBoolean) {
                 toggleTop.setIcon(icon2);
             } else {
                 toggleTop.setIcon(icon);
