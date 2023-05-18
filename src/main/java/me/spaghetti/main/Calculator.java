@@ -1,23 +1,14 @@
 package me.spaghetti.main;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
-//the text box hasn't worked since I changed the size of the text box
+// the text box hasn't worked since I changed the size of the text box
 
 public class Calculator implements ActionListener, KeyListener {
 
@@ -26,12 +17,12 @@ public class Calculator implements ActionListener, KeyListener {
 
     int panelW = 300;
     int panelH = 300;
-    int panelX = minX/2-panelW/2-8;
+    int panelX = minX / 2 - panelW / 2 - 8;
     int panelY = 100;
 
     JFrame frame;
-    JTextField textfield;
-    JTextField textfield2;
+    JTextField textField;
+    JTextField textField2;
     JButton[] numberButtons = new JButton[10];
     JButton[] functionButtons = new JButton[10];
     JButton addButton, subButton, mulButton, divButton;
@@ -52,11 +43,11 @@ public class Calculator implements ActionListener, KeyListener {
     JButton toggleTop = new JButton();
     ImageIcon icon = new ImageIcon("src/main/resources/stayOnTop.png");
     ImageIcon icon2 = new ImageIcon("src/main/resources/onTop.png");
-    JButton pwrButton = new JButton();
+    JButton pwrButton;
     ImageIcon bsIcon = new ImageIcon("src/main/resources/backspace.png");
     Image bsImage = bsIcon.getImage(); // transform it
-    Image newimg = bsImage.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-    ImageIcon bsIcon2 = new ImageIcon(newimg); // transform it back
+    Image newImg = bsImage.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+    ImageIcon bsIcon2 = new ImageIcon(newImg); // transform it back
 
     String stringSansZero;
 
@@ -70,79 +61,63 @@ public class Calculator implements ActionListener, KeyListener {
         }
         return stringSansZero;
     }
-    
-    void numberPress(char i) {
-        if (textfield.getText().equals("0")) {
-            textfield.setText("");
-        } //clears the lead zero
-        textfield.setText(textfield.getText().concat(Character.toString(i)));
-    }
-    
 
     void runPlMiMuDi(char getChar) {
-        num1 = Double.parseDouble(textfield.getText());
-        textfield2.setText(textfield.getText());                
+        num1 = Double.parseDouble(textField.getText());
+        textField2.setText(textField.getText());
         operator = getChar;
         repeat = false;
-        textfield.setText("0");
-}
+        textField.setText("0");
+    }
+
     void runPwr(char getChar) {
-        textfield.setText(String.valueOf(Math.pow(Double.parseDouble(textfield.getText()), 2)));
-        textfield.setText(removeZeroPoint(textfield.getText()));
-        textfield2.setText("");                
+        textField.setText(String.valueOf(Math.pow(Double.parseDouble(textField.getText()), 2)));
+        textField.setText(removeZeroPoint(textField.getText()));
+        textField2.setText("");
         operator = getChar;
     }
+
     void runEquals() {
         if (!repeat) {
-            num2 = Double.parseDouble(textfield.getText());
+            num2 = Double.parseDouble(textField.getText());
         }
-        textfield2.setText("");
+        textField2.setText("");
         switch (operator) {
-            case '+':
-                result = num1 + num2;
-                break;
-            case '-':
-                result = num1 - num2;
-                break;
-            case '*': 
-                result = num1 * num2;
-                break;
-            case '/': 
-                result = num1 / num2;
-                break;
-            case '^':
-                result = Math.pow(Double.parseDouble(textfield.getText()), 2);
-                break;
-            default:
-                result = Double.parseDouble(textfield.getText());
+            case '+', ' ' -> result = num1 + num2;
+            case '-' -> result = num1 - num2;
+            case '*' -> result = num1 * num2;
+            case '/' -> result = num1 / num2;
+            case '^' -> result = Math.pow(Double.parseDouble(textField.getText()), 2);
+            default -> result = Double.parseDouble(textField.getText());
         }
-        textfield.setText(String.valueOf(result));
-        textfield.setText(removeZeroPoint(textfield.getText()));
+        textField.setText(String.valueOf(result));
+        textField.setText(removeZeroPoint(textField.getText()));
         repeat = true;
         num1 = result;
     }
 
     void clear() {
-        textfield.setText("0");
+        textField.setText("0");
         operator = ' ';
         num1 = 0;
-        textfield2.setText("");
+        textField2.setText("");
     }
+
     void backSpace() {
-        String string = textfield.getText();
-        textfield.setText("");
+        String string = textField.getText();
+        textField.setText("");
         for (int i = 0; i < string.length() - 1; i++) {
-            textfield.setText(textfield.getText() + string.charAt(i));
+            textField.setText(textField.getText() + string.charAt(i));
         }
-        if (textfield.getText().equals("")) {
-            textfield.setText("0");
+        if (textField.getText().equals("")) {
+            textField.setText("0");
         }
     }
 
     void decimal() {
-        //have it only trigger if there isn't already a decimal place
-        if(textfield.getText().indexOf('.') == -1) {
-            textfield.setText(textfield.getText().concat("."));
+        // have it only trigger if there isn't already a decimal place
+        if (textField.getText().indexOf('.') == -1) {
+            textField.setText(textField.getText().concat("."));
         }
     }
 
@@ -155,19 +130,19 @@ public class Calculator implements ActionListener, KeyListener {
         frame.setLayout(null);
         frame.setMinimumSize(frame.getSize());
 
-        textfield = new JTextField();
-        textfield.setBounds(50, 25, minX - 100, 50);
-        textfield.setFont(myFont);
-        textfield.setEditable(false);
-        textfield.setBorder(null);
-        textfield.setText("0");
+        textField = new JTextField();
+        textField.setBounds(50, 25, minX - 100, 50);
+        textField.setFont(myFont);
+        textField.setEditable(false);
+        textField.setBorder(null);
+        textField.setText("0");
 
-        textfield2 = new JTextField();
-        textfield2.setBounds(50, 15, minX-100, 10);
-        textfield2.setFont(new Font("Consolas", Font.BOLD, 10));
-        textfield2.setEditable(false);
-        textfield2.setBorder(null);
-        frame.add(textfield2);
+        textField2 = new JTextField();
+        textField2.setBounds(50, 15, minX - 100, 10);
+        textField2.setFont(new Font("Consolas", Font.BOLD, 10));
+        textField2.setEditable(false);
+        textField2.setBorder(null);
+        frame.add(textField2);
 
         toggleTop.setBounds(minX - 50, 5, 30, 30);
         frame.add(toggleTop);
@@ -220,16 +195,16 @@ public class Calculator implements ActionListener, KeyListener {
 
         negButton.setFont(new Font("Consolas", Font.BOLD, 20));
 
-        Color oogle = new Color(0xFFFFFF);
+        Color color1 = new Color(0xFFFFFF);
         for (int i = 0; i < 10; i++) {
-            functionButtons[i].setBackground(oogle);
+            functionButtons[i].setBackground(color1);
         }
 
         for (int i = 0; i < 10; i++) {
-            numberButtons[i].setBackground(oogle);
+            numberButtons[i].setBackground(color1);
         }
-        toggleTop.setBackground(oogle);
-        frame.setBackground(oogle);
+        toggleTop.setBackground(color1);
+        frame.setBackground(color1);
 
         panel.add(clrButton);
         panel.add(pwrButton);
@@ -256,7 +231,7 @@ public class Calculator implements ActionListener, KeyListener {
         frame.addKeyListener(this);
 
         frame.add(panel);
-        frame.add(textfield);
+        frame.add(textField);
         frame.setLocation(locX, locY);
         frame.setVisible(true);
     }
@@ -269,7 +244,7 @@ public class Calculator implements ActionListener, KeyListener {
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 10; i++) {
             if (e.getSource() == numberButtons[i]) {
-                textfield.setText(change.numberPress(textfield.getText(), (char)(i+'0')));
+                textField.setText(change.numberPress(textField.getText(), (char) (i + '0')));
             }
         }
         if (e.getSource() == decButton) {
@@ -279,20 +254,28 @@ public class Calculator implements ActionListener, KeyListener {
             operator = '^';
             runPwr(operator);
         }
-        if (Arrays.asList(addButton, subButton, mulButton, divButton).contains(e.getSource())) {
-            if(e.getSource()==addButton) {
-                operator='+';
-            } else if(e.getSource()==subButton) {
-                operator='-';
-            } else if(e.getSource()==mulButton) {
-                operator='*';
+
+        JButton clickedButton;
+        Object evtSrc = e.getSource();
+        if (evtSrc instanceof JButton) {
+            clickedButton = (JButton) evtSrc;
+        } else {
+            return;
+        }
+        if (Arrays.asList(addButton, subButton, mulButton, divButton).contains(clickedButton)) {
+            if (e.getSource() == addButton) {
+                operator = '+';
+            } else if (e.getSource() == subButton) {
+                operator = '-';
+            } else if (e.getSource() == mulButton) {
+                operator = '*';
             } else {
-                operator='/';
+                operator = '/';
             }
             runPlMiMuDi(operator);
         }
         if (e.getSource() == equButton) {
-            runEquals(); 
+            runEquals();
         }
         if (e.getSource() == clrButton) {
             clear();
@@ -301,7 +284,7 @@ public class Calculator implements ActionListener, KeyListener {
             backSpace();
         }
         if (e.getSource() == negButton) {
-            textfield.setText(change.invertSign(textfield.getText()));
+            textField.setText(change.invertSign(textField.getText()));
         }
         if (e.getSource() == toggleTop) {
             topBoolean = !topBoolean;
@@ -318,28 +301,28 @@ public class Calculator implements ActionListener, KeyListener {
     public void keyReleased(KeyEvent e) {
         char character = e.getKeyChar();
         int keyCode = e.getKeyCode();
-        boolean isDigit = Character.isDigit(character); 
-        
-        if(isDigit) {
-            textfield.setText(change.numberPress(textfield.getText(), character));
-        } else if(Arrays.asList('*', '/', '-', '+').contains(character)) {   
+        boolean isDigit = Character.isDigit(character);
+
+        if (isDigit) {
+            textField.setText(change.numberPress(textField.getText(), character));
+        } else if (Arrays.asList('*', '/', '-', '+').contains(character)) {
             runPlMiMuDi(character);
-        } else if(character == '^') {
+        } else if (character == '^') {
             runPwr(character);
-        } else if(character == '.') {
+        } else if (character == '.') {
             decimal();
-        } else if(keyCode==10 ||e.getKeyChar()=='=') {
+        } else if (keyCode == 10 || e.getKeyChar() == '=') {
             runEquals();
-        } else if(keyCode==27) {
+        } else if (keyCode == 27) {
             clear();
-        } else if(keyCode==8) {
-            textfield.setText(change.backspace(textfield.getText()));
+        } else if (keyCode == 8) {
+            textField.setText(change.backspace(textField.getText()));
         }
     }
+
     @Override
-    public void keyPressed(KeyEvent e) {
-    }
+    public void keyPressed(KeyEvent e) {}
+
     @Override
-    public void keyTyped(KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 }
