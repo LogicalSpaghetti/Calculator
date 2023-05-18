@@ -10,16 +10,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+//the text box hasn't worked since I changed the size of the text box
+
 public class Calculator implements ActionListener, KeyListener {
 
-    int minX = 400;
-    int minY = 500;
+    int minX = 340;
+    int minY = 450;
+
+    int panelW = 300;
+    int panelH = 300;
+    int panelX = minX/2-panelW/2-8;
+    int panelY = 100;
 
     JFrame frame;
     JTextField textfield;
@@ -34,7 +42,7 @@ public class Calculator implements ActionListener, KeyListener {
 
     double num1 = 0, num2 = 0, result = 0;
     char operator;
-    boolean repeat = false;
+    boolean repeat = true;
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int locX = (int) ((screenSize.getWidth() - minX) / 2); // accounts for the size of the window when centering it
@@ -42,10 +50,10 @@ public class Calculator implements ActionListener, KeyListener {
 
     Boolean topBoolean = false;
     JButton toggleTop = new JButton();
-    ImageIcon icon = new ImageIcon("stayOnTop.png");
-    ImageIcon icon2 = new ImageIcon("onTop.png");
+    ImageIcon icon = new ImageIcon("src/main/resources/stayOnTop.png");
+    ImageIcon icon2 = new ImageIcon("src/main/resources/onTop.png");
     JButton pwrButton = new JButton();
-    ImageIcon bsIcon = new ImageIcon("backspace.png");
+    ImageIcon bsIcon = new ImageIcon("src/main/resources/backspace.png");
     Image bsImage = bsIcon.getImage(); // transform it
     Image newimg = bsImage.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
     ImageIcon bsIcon2 = new ImageIcon(newimg); // transform it back
@@ -62,6 +70,81 @@ public class Calculator implements ActionListener, KeyListener {
         }
         return stringSansZero;
     }
+    
+    void numberPress(char i) {
+        if (textfield.getText().equals("0")) {
+            textfield.setText("");
+        } //clears the lead zero
+        textfield.setText(textfield.getText().concat(Character.toString(i)));
+    }
+    
+
+    void runPlMiMuDi(char getChar) {
+        num1 = Double.parseDouble(textfield.getText());
+        textfield2.setText(textfield.getText());                
+        operator = getChar;
+        repeat = false;
+        textfield.setText("0");
+}
+    void runPwr(char getChar) {
+        textfield.setText(String.valueOf(Math.pow(Double.parseDouble(textfield.getText()), 2)));
+        textfield.setText(removeZeroPoint(textfield.getText()));
+        textfield2.setText("");                
+        operator = getChar;
+    }
+    void runEquals() {
+        if (!repeat) {
+            num2 = Double.parseDouble(textfield.getText());
+        }
+        textfield2.setText("");
+        switch (operator) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*': 
+                result = num1 * num2;
+                break;
+            case '/': 
+                result = num1 / num2;
+                break;
+            case '^':
+                result = Math.pow(Double.parseDouble(textfield.getText()), 2);
+                break;
+            default:
+                result = Double.parseDouble(textfield.getText());
+        }
+        textfield.setText(String.valueOf(result));
+        textfield.setText(removeZeroPoint(textfield.getText()));
+        repeat = true;
+        num1 = result;
+    }
+
+    void clear() {
+        textfield.setText("0");
+        operator = ' ';
+        num1 = 0;
+        textfield2.setText("");
+    }
+    void backSpace() {
+        String string = textfield.getText();
+        textfield.setText("");
+        for (int i = 0; i < string.length() - 1; i++) {
+            textfield.setText(textfield.getText() + string.charAt(i));
+        }
+        if (textfield.getText().equals("")) {
+            textfield.setText("0");
+        }
+    }
+
+    void decimal() {
+        //have it only trigger if there isn't already a decimal place
+        if(textfield.getText().indexOf('.') == -1) {
+            textfield.setText(textfield.getText().concat("."));
+        }
+    }
 
     Calculator() {
 
@@ -73,14 +156,14 @@ public class Calculator implements ActionListener, KeyListener {
         frame.setMinimumSize(frame.getSize());
 
         textfield = new JTextField();
-        textfield.setBounds(50, 25, 300, 50);
+        textfield.setBounds(50, 25, minX - 100, 50);
         textfield.setFont(myFont);
         textfield.setEditable(false);
         textfield.setBorder(null);
         textfield.setText("0");
 
         textfield2 = new JTextField();
-        textfield2.setBounds(50, 15, 300, 10);
+        textfield2.setBounds(50, 15, minX-100, 10);
         textfield2.setFont(new Font("Consolas", Font.BOLD, 10));
         textfield2.setEditable(false);
         textfield2.setBorder(null);
@@ -117,7 +200,7 @@ public class Calculator implements ActionListener, KeyListener {
         functionButtons[8] = negButton;
         functionButtons[9] = pwrButton;
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 10; i++) {
             functionButtons[i].addActionListener(this);
             functionButtons[i].setFont(myFont);
             functionButtons[i].setFocusable(false);
@@ -129,10 +212,10 @@ public class Calculator implements ActionListener, KeyListener {
             numberButtons[i].setFont(myFont);
             numberButtons[i].setFocusable(false);
         }
-        pwrButton.addActionListener(this);
+        pwrButton.setFont(new Font("Consolas", Font.BOLD, 15));
 
         panel = new JPanel();
-        panel.setBounds(50, 100, 300, 300);
+        panel.setBounds(panelX, panelY, panelW, panelH);
         panel.setLayout(new GridLayout(5, 4, 10, 10));
 
         negButton.setFont(new Font("Consolas", Font.BOLD, 20));
@@ -184,89 +267,41 @@ public class Calculator implements ActionListener, KeyListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         for (int i = 0; i < 10; i++) {
             if (e.getSource() == numberButtons[i]) {
-                if (textfield.getText().equals("0")) {
-                    textfield.setText("");
-                }
-                textfield.setText(textfield.getText().concat(String.valueOf(i)));
+                textfield.setText(change.numberPress(textfield.getText(), (char)(i+'0')));
             }
-        }
-        if (e.getSource() == pwrButton) {
-            textfield.setText(String.valueOf(Math.pow(Double.parseDouble(textfield.getText()), 2)));
-            textfield.setText(removeZeroPoint(textfield.getText()));
-            operator = '^';
         }
         if (e.getSource() == decButton) {
-            textfield.setText(textfield.getText().concat("."));
+            decimal();
         }
-        if (e.getSource() == addButton) {
-            num1 = Double.parseDouble(textfield.getText());
-            textfield2.setText(textfield.getText());
-            operator = '+';
-            repeat = false;
-            textfield.setText("0");
+        if (e.getSource() == pwrButton) {
+            operator = '^';
+            runPwr(operator);
         }
-        if (e.getSource() == subButton) {
-            num1 = Double.parseDouble(textfield.getText());
-            textfield2.setText(textfield.getText());
-            operator = '-';
-            repeat = false;
-            textfield.setText("0");
-        }
-        if (e.getSource() == mulButton) {
-            num1 = Double.parseDouble(textfield.getText());
-            textfield2.setText(textfield.getText());
-            operator = '*';
-            repeat = false;
-            textfield.setText("0");
-        }
-        if (e.getSource() == divButton) {
-            num1 = Double.parseDouble(textfield.getText());
-            textfield2.setText(textfield.getText());
-            operator = '/';
-            repeat = false;
-            textfield.setText("0");
+        if (Arrays.asList(addButton, subButton, mulButton, divButton).contains(e.getSource())) {
+            if(e.getSource()==addButton) {
+                operator='+';
+            } else if(e.getSource()==subButton) {
+                operator='-';
+            } else if(e.getSource()==mulButton) {
+                operator='*';
+            } else {
+                operator='/';
+            }
+            runPlMiMuDi(operator);
         }
         if (e.getSource() == equButton) {
-            if (!repeat) {
-                num2 = Double.parseDouble(textfield.getText());
-            }
-            textfield2.setText("");
-            switch (operator) {
-                case '+' -> result = num1 + num2;
-                case '-' -> result = num1 - num2;
-                case '*' -> result = num1 * num2;
-                case '/' -> result = num1 / num2;
-                case '^' -> result = Math.pow(Double.parseDouble(textfield.getText()), 2);
-                default -> result = Double.parseDouble(textfield.getText());
-            }
-            textfield.setText(String.valueOf(result));
-            textfield.setText(removeZeroPoint(textfield.getText()));
-            repeat = true;
-            num1 = result;
+            runEquals(); 
         }
         if (e.getSource() == clrButton) {
-            textfield.setText("0");
-            operator = ' ';
-            num1 = 0;
-            textfield2.setText("");
+            clear();
         }
         if (e.getSource() == delButton) {
-            String string = textfield.getText();
-            textfield.setText("");
-            for (int i = 0; i < string.length() - 1; i++) {
-                textfield.setText(textfield.getText() + string.charAt(i));
-            }
-            if (textfield.getText().equals("")) {
-                textfield.setText("0");
-            }
+            backSpace();
         }
         if (e.getSource() == negButton) {
-            double temp = Double.parseDouble(textfield.getText());
-            temp *= -1;
-            textfield.setText(String.valueOf(temp));
+            textfield.setText(change.invertSign(textfield.getText()));
         }
         if (e.getSource() == toggleTop) {
             topBoolean = !topBoolean;
@@ -280,22 +315,31 @@ public class Calculator implements ActionListener, KeyListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println("keyPressed");
-    }
-
-    @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("You released key char: " + e.getKeyChar());
-        textfield.setText(textfield.getText().concat(Character.toString(e.getKeyChar())));
-        System.out.println(e.getKeyChar());
-        System.out.println("keyReleased");
+        char character = e.getKeyChar();
+        int keyCode = e.getKeyCode();
+        boolean isDigit = Character.isDigit(character); 
+        
+        if(isDigit) {
+            textfield.setText(change.numberPress(textfield.getText(), character));
+        } else if(Arrays.asList('*', '/', '-', '+').contains(character)) {   
+            runPlMiMuDi(character);
+        } else if(character == '^') {
+            runPwr(character);
+        } else if(character == '.') {
+            decimal();
+        } else if(keyCode==10 ||e.getKeyChar()=='=') {
+            runEquals();
+        } else if(keyCode==27) {
+            clear();
+        } else if(keyCode==8) {
+            textfield.setText(change.backspace(textfield.getText()));
+        }
     }
-
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println("keyTyped");
     }
 }
