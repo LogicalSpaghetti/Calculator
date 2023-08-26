@@ -109,7 +109,7 @@ public class Calculator implements ActionListener, KeyListener {
         for (int i = 0; i < string.length() - 1; i++) {
             textField.setText(textField.getText() + string.charAt(i));
         }
-        if (textField.getText().equals("")) {
+        if (textField.getText().isEmpty()) {
             textField.setText("0");
         }
     }
@@ -240,11 +240,42 @@ public class Calculator implements ActionListener, KeyListener {
         new Calculator();
     }
 
+    static String numberPress(String text, char i) {
+        if (text.equals("0")) {
+            text = "";
+        } // clears the lead zero
+        return text.concat(Character.toString(i));
+    }
+
+    static String backspace(String textFieldText) {
+
+        String string = textFieldText;
+        StringBuilder textFieldTextBuilder = new StringBuilder();
+        for (int i = 0; i < string.length() - 1; i++) {
+            textFieldTextBuilder.append(string.charAt(i));
+        }
+        textFieldText = textFieldTextBuilder.toString();
+        if (textFieldText.isEmpty()) {
+            textFieldText = ("0");
+        }
+        return textFieldText;
+    }
+
+    static String invertSign(String textFieldText) {
+
+        double temp = Double.parseDouble(textFieldText);
+        temp *= -1;
+        String temp2 = String.valueOf(temp);
+        temp2 = backspace(temp2);
+        temp2 = backspace(temp2);
+        return temp2;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 10; i++) {
             if (e.getSource() == numberButtons[i]) {
-                textField.setText(change.numberPress(textField.getText(), (char) (i + '0')));
+                textField.setText(numberPress(textField.getText(), (char) (i + '0')));
             }
         }
         if (e.getSource() == decButton) {
@@ -284,7 +315,7 @@ public class Calculator implements ActionListener, KeyListener {
             backSpace();
         }
         if (e.getSource() == negButton) {
-            textField.setText(change.invertSign(textField.getText()));
+            textField.setText(invertSign(textField.getText()));
         }
         if (e.getSource() == toggleTop) {
             topBoolean = !topBoolean;
@@ -304,7 +335,7 @@ public class Calculator implements ActionListener, KeyListener {
         boolean isDigit = Character.isDigit(character);
 
         if (isDigit) {
-            textField.setText(change.numberPress(textField.getText(), character));
+            textField.setText(numberPress(textField.getText(), character));
         } else if (Arrays.asList('*', '/', '-', '+').contains(character)) {
             runPlMiMuDi(character);
         } else if (character == '^') {
@@ -316,7 +347,7 @@ public class Calculator implements ActionListener, KeyListener {
         } else if (keyCode == 27) {
             clear();
         } else if (keyCode == 8) {
-            textField.setText(change.backspace(textField.getText()));
+            textField.setText(backspace(textField.getText()));
         }
     }
 
